@@ -4,19 +4,20 @@ addRowButton.onclick = addRow;
 const table = document.querySelector(".table"),
   tableBody = document.querySelector(".table_body");
 
-let text = "";
 var rowCount = 0;
 
 const storageArr = JSON.parse(sessionStorage.getItem("rowsArr"));
 if (storageArr) refreshHendler();
 
 function addRow() {
+
   rowCount++;
   rowFactory();
   saveToStorage();
 }
 
 function rowFactory(id = rowCount, text = "") {
+  
   const tableRow = elementFactory("tr", {
       id: id,
       class: "row",
@@ -52,6 +53,7 @@ function rowFactory(id = rowCount, text = "") {
 }
 
 function elementFactory(nameTag, attrs = {}, innerHTML = "") {
+
   const element = document.createElement(nameTag);
   if (!!attrs)
     for (attrKey in attrs) {
@@ -63,6 +65,7 @@ function elementFactory(nameTag, attrs = {}, innerHTML = "") {
 }
 
 function saveToStorage() {
+
   const tableRows = document.querySelectorAll(".row");
   const rowsArr = [];
   tableRows.forEach((row) => {
@@ -73,12 +76,14 @@ function saveToStorage() {
 }
 
 function refreshHendler() {
+
   rowCount = Math.max(...storageArr.map((o) => o.id));
   storageArr.forEach((row) => rowFactory(row.id, row.text));
   table.append(tableBody);
 }
 
 function removeRow(button) {
+
   button.parentNode.parentNode.remove();
   saveToStorage();
 }
@@ -90,6 +95,7 @@ function dragStart() {
 }
 
 function dragOver() {
+  
   const dragOverRow = event.target.closest(".row");
   event.preventDefault();
 
