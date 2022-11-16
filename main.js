@@ -4,7 +4,6 @@ addRowButton.onclick = addRow;
 const table = document.querySelector(".table"),
   tableBody = document.querySelector(".table_body");
 
-let text = "";
 var rowCount = 0;
 
 const storageArr = JSON.parse(sessionStorage.getItem("rowsArr"));
