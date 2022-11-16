@@ -1,0 +1,37 @@
+body {
+
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.36;
+    font-size: 1.4rem;
+}
+
+.table_body {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.table_body .row {
+margin: 10px;
+padding: 15px;
+border: 1px solid #dfdfdf;
+background: #f5f5f5;
+}
+
+/* (B) DRAG-AND-DROP HINT */
+.table_body .row.hint {
+border: 1px solid #ffc49a;
+background: #feffb4;
+}
+.table_body .row.active {
+border: 1px solid #ffa5a5;
+background: #ffe7e7;
+}
+
+.drag-row {
+
+    cursor: move;
+    user-select: none;
+}
