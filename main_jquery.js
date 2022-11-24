@@ -2,8 +2,7 @@ $(".add_row_button").click(addRow);
 
 var rowCount = 0;
 
-const storageArr = JSON.parse(sessionStorage.getItem("rowsArr"));
-if (storageArr) refreshHendler();
+refreshHendler();
 
 function addRow() {
   rowCount++;

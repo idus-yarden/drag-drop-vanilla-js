@@ -6,8 +6,7 @@ const table = document.querySelector(".table"),
 
 var rowCount = 0;
 
-const storageArr = JSON.parse(sessionStorage.getItem("rowsArr"));
-if (storageArr) refreshHendler();
+refreshHendler();
 
 function addRow() {
   rowCount++;
@@ -69,11 +68,13 @@ function saveToStorage() {
     rowsArr.push({ id: row.id, text: value });
   });
   sessionStorage.setItem("rowsArr", JSON.stringify(rowsArr));
+  sessionStorage.setItem("rowsCount", JSON.stringify(rowCount));
 }
 
 function refreshHendler() {
-  rowCount = Math.max(...storageArr.map((o) => o.id));
-  storageArr.forEach((row) => rowFactory(row.id, row.text));
+  const storageArr = JSON.parse(sessionStorage.getItem("rowsArr"));
+  rowCount = JSON.parse(sessionStorage.getItem("rowsCount"));
+  storageArr && storageArr.forEach((row) => rowFactory(row.id, row.text));
   table.append(tableBody);
 }
 
