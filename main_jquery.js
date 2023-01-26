@@ -14,9 +14,11 @@ function rowFactory(id = rowCount, text = "") {
   const tableRow = elementFactory("tr", {
       id: id,
       class: "row",
-      ondragstart: "dragStart()",
-      ondragover: "dragOver()",
-      ondragleave: "saveToStorage()",
+      events: {
+        dragstart: dragStart,
+        dragover: dragOver,
+        dragleave: saveToStorage
+      },
       draggable: true,
     }),
     dragCell = elementFactory("td"),
@@ -27,11 +29,17 @@ function rowFactory(id = rowCount, text = "") {
       row_id: id,
       value: text,
       class: "input_text",
-      onchange: "saveToStorage()",
+      events: {
+        change: saveToStorage
+      }
     }),
     removeButton = elementFactory(
       "button",
-      { class: "action_delete", row_id: id, onclick: "removeRow(this)" },
+      { class: "action_delete",
+        row_id: id,
+        events: {
+          click: function() {removeRow(this)} }
+      },
       "&#215; ",
       "removeButtonSymbol"
     ),
@@ -47,49 +55,70 @@ function rowFactory(id = rowCount, text = "") {
 
 function elementFactory(nameTag, attrs = {}, innerHTML = "") {
   const element = $(`<${nameTag}></${nameTag}>`).html(`${innerHTML}`);
-  if (!!attrs)
+  if (attrs)
     for (attrKey in attrs) {
-      $(element).attr(attrKey, attrs[attrKey]);
+      if (attrKey === 'events') {
+        for (eventKey in attrs[attrKey]) {
+          $(element).on(eventKey, attrs[attrKey][eventKey])
+        }
+      } else {
+        $(element).attr(attrKey, attrs[attrKey]);
+      }
     }
   return element;
 }
 
 function saveToStorage() {
   const tableRows = $(".row");
-  const rowsArr = [];
+  let rowsArr = [];
   $.each(tableRows, function (key, inputVal) {
     const inputText = $(inputVal).find("input").val();
     rowsArr.push({ id: inputVal.id, text: inputText });
   });
-  sessionStorage.setItem("rowsArr", JSON.stringify(rowsArr));
-  sessionStorage.setItem("rowsCount", JSON.stringify(rowCount));
+  localStorage.setItem("rowsArr", JSON.stringify(rowsArr));
+  localStorage.setItem("rowsCount", JSON.stringify(rowCount));
 }
 
 function refreshHendler() {
-  const storageArr = JSON.parse(sessionStorage.getItem("rowsArr"));
-  rowCount = JSON.parse(sessionStorage.getItem("rowsCount"));
-  storageArr && storageArr.forEach((row) => rowFactory(row.id, row.text));
+  const storageArr = JSON.parse(localStorage.getItem("rowsArr"));
+  rowCount = JSON.parse(localStorage.getItem("rowsCount"));
+  if (storageArr) storageArr.forEach((row) => rowFactory(row.id, row.text));
   $(".table").append($(".table_body"));
 }
 
 function removeRow(button) {
-  button.parentNode.parentNode.remove();
+  button.closest('.row').remove();
   saveToStorage();
 }
 
 var row;
 
-function dragStart() {
+function dragStart(event) {
   row = event.target;
 }
 
-function dragOver() {
-  const dragOverRow = event.target.closest(".row");
+function dragOver(event) {
+  const dragOverRow = $(event.target.closest(".row"));
+  // console.log(dragOverRow);
   event.preventDefault();
 
-  let children = Array.from(dragOverRow.parentNode.children);
+  
+  let children = dragOverRow.siblings();
+  let draggedRowIndex = $(children).index(row);
+  let dragOverRowIndex = $(children).index(dragOverRow);
+  console.log(children);
+  // console.log(row);
+  // console.log(dragOverRow);
+  console.log(dragOverRow,'-',dragOverRowIndex,'|',row,"-",draggedRowIndex);
 
-  if (children.indexOf(dragOverRow) > children.indexOf(row))
+  if (dragOverRowIndex > draggedRowIndex) {
+
+    console.log(draggedRowIndex, "after", dragOverRowIndex);
     dragOverRow.after(row);
-  else dragOverRow.before(row);
+  }
+  else if (dragOverRowIndex < draggedRowIndex) {
+
+    console.log(draggedRowIndex, "before", dragOverRowIndex);
+    dragOverRow.before(row);
+  }
 }
